@@ -1,5 +1,5 @@
-PY=python
 UV=uv
+PY=$(UV) run python
 HUGO=hugo
 
 BASEDIR=$(CURDIR)
@@ -24,9 +24,8 @@ clean:
 	[ ! -d $(OUTPUTDIR) ] || rm -rf $(OUTPUTDIR)
 
 serve:
-	$(UV) pip install --upgrade -r pyproject.toml
-	$(UV) pip install --upgrade -r pyproject.toml --group dev
-	pre-commit install
+	$(UV) sync --group dev
+	$(UV) run pre-commit install
 	$(PY) src/prepare_xep_list.py
 	$(PY) src/prepare_rfc_list.py
 	$(PY) src/prepare_software_list.py
@@ -34,7 +33,7 @@ serve:
 	$(HUGO) server --bind=0.0.0.0 --baseURL="http://localhost/" --buildFuture
 
 publish:
-	$(UV) pip install --upgrade -r pyproject.toml
+	$(UV) sync
 	$(PY) src/prepare_xep_list.py
 	$(PY) src/prepare_rfc_list.py
 	$(PY) src/lint_software_list.py software.json
